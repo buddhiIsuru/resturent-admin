@@ -14,7 +14,7 @@ const Login = () => {
 
   useEffect(() => {
     form.setFieldsValue({
-      username: "super",
+      username: "ADMIN",
       password: "12345",
     });
   }, []);
