@@ -3,10 +3,16 @@ import DashboardInfoCard from "../components/DashboardInfoCard/DashboardInfoCard
 
 import SplineArea from "../charts/SplineArea";
 import Pie from "../charts/Pie";
+import { Spin } from "antd";
 
 const Dashboard = () => {
   return (
     <div className="duration-500 p-6">
+      <div className="bg-white shadow-sm p-5 border-[1px] border-[#e6ebf1] rounded-lg">
+        <h5 className="mb-8 text-lg font-medium">Updating Soon
+          <Spin />
+        </h5>
+      </div>
       {/* <div className="grid gap-4 grid-cols-1 md:grid-cols-2 xl:grid-cols-5 ">
         <DashboardInfoCard title="Companies" amount={40} />
         <DashboardInfoCard title="Teams" amount={35} />

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Col, Form, Input, Row } from "antd";
+import { Col, Form, Input, Row, Spin } from "antd";
 import { login } from "./../service/authService";
 import { localStorageSetItem } from "../constants/LocalStorageManagement";
 import { useNavigate } from "react-router-dom";
@@ -24,6 +24,7 @@ const Login = () => {
   };
 
   const loginFunction = async (values) => {
+    setIsLoading(true);
     // navigateTo("/admin/dashboard");
     const data = {
       userName: values.username,
@@ -31,12 +32,13 @@ const Login = () => {
     };
     const response = await login(data);
     if (response.status === 200) {
-      if (response.data.outletModal&&response.data.roleModal) {
+      if (response.data.outletModal && response.data.roleModal) {
         localStorageSetItem("outlet", response.data.outletModal);
         localStorageSetItem("role", response.data.roleModal);
         navigateTo("/admin/dashboard");
       }
     }
+    setIsLoading(false);
   };
 
   const onFinishFailed = (errorInfo) => {
@@ -139,7 +141,11 @@ const Login = () => {
                   htmlType="submit"
                   className="w-[100%] shadow-md text-center bg-[#01c4f3] border-radius-50 text-[white] text-[16px] text-bold p-2"
                 >
-                  Login
+                  {
+                    !isLoading ?
+                      "Login" :
+                      <Spin />
+                  }
                 </button>
               </Form.Item>
             </Form>
