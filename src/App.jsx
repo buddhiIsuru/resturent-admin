@@ -68,6 +68,7 @@ function App() {
       <Layout>
         <Routes>
           <Route path="/admin/dashboard" element={<Dashboard />} />
+          {/* <Route path="/admin/dashboard" element={<Dashboard />} /> */}
           <Route path="/admin/invoice" element={<Invoice />} />
           <Route path="/admin/companies" element={<Company />} />
           <Route path="/admin/manage-company" element={<ManageCompany />} />

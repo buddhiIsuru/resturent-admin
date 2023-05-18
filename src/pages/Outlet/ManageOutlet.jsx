@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Button, Form, Input, Modal, message } from "antd";
+import { Button, Form, Input, Modal, Select, message } from "antd";
 import { saveOutlet } from "../../service/outletService";
 import { useDispatch } from "react-redux";
 import { setIsLoadingOutlet } from "../../redux/state/outletState";
 import { notifySuccess } from "../../Utils/utility";
+import { baseUrl } from "../../service/baseUrl";
+import axios from "axios";
 
 const layout = {
   labelCol: {
@@ -27,7 +29,19 @@ const ManageOutlet = (props) => {
 
   const [messageApi, contextHolder] = message.useMessage();
 
+  const [imageId, setImageId] = useState(null);
+
   const dispatch = useDispatch();
+
+  const onFileChangeHandler = async (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append('productImage', e.target.files[0]);
+    const response = await axios.post(baseUrl + "/api/file/upload", formData);
+    if (response.status === 200) {
+      setImageId(response.data);
+    }
+  };
 
   const onFinish = async (values) => {
     dispatch(setIsLoadingOutlet(true));
@@ -35,7 +49,8 @@ const ManageOutlet = (props) => {
       outletName: values.outlet_name,
       address: values.outlet_address,
       phoneNo: values.outlet_phoneNo,
-      companyId: 1,
+      companyId: values.company,
+      logoId: imageId,
     }
     const response = await saveOutlet(data);
     if (response.status === 200) {
@@ -51,6 +66,11 @@ const ManageOutlet = (props) => {
   const onReset = () => {
     form.resetFields();
   };
+
+  const handleChange = (value) => {
+    console.log(`selected ${value}`);
+  };
+
 
   return (
     <div className="p-6">
@@ -86,6 +106,26 @@ const ManageOutlet = (props) => {
           </Form.Item>
 
           <Form.Item
+            name="company"
+            label="Company"
+            rules={[
+              {
+                required: true,
+              },
+            ]}
+          >
+
+            <Select
+              className="bg-white w-[100%] flex items-center border-[1px] border-[#6A6D6C]  border-radius-5  py-1"
+              style={{
+                width: '100%',
+              }}
+              onChange={handleChange}
+              options={props.companyList}
+            />
+          </Form.Item>
+
+          <Form.Item
             name="outlet_address"
             label="Address"
             rules={[
@@ -112,6 +152,18 @@ const ManageOutlet = (props) => {
             <Input
               className="bg-white w-[100%] flex items-center border-[1px] border-[#6A6D6C]  border-radius-5 py-2 px-2"
               placeholder="Phone No"
+            />
+          </Form.Item>
+
+          <Form.Item
+            name="file"
+            label="file"
+          >
+            <Input
+              type='file'
+              className="bg-white w-[100%] flex items-center border-[1px] border-[#6A6D6C]  border-radius-5 py-2 px-2"
+              placeholder="Logo"
+              onChange={(e) => onFileChangeHandler(e)}
             />
           </Form.Item>
 

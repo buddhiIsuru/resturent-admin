@@ -7,21 +7,40 @@ import { useNavigate } from "react-router-dom";
 import { categoryTableColumns } from "../../constants/tableColumns";
 import ManageOutlet from "./ManageOutlet";
 import { getAllOutlet } from "../../service/outletService";
+import { getCompany } from "../../service/companyService";
 
 const Outlets = () => {
   const navigateTo = useNavigate();
   const [outletTableData, setOutletTableData] = useState([]);
+  const [companyList, setCompanyList] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
+    getAllOutlets(0, 20);
     getAllCompanys(0, 20);
   }, []);
 
-  const getAllCompanys = async () => {
+  const getAllOutlets = async () => {
     const response = await getAllOutlet();
     if (response.status === 200) {
       setOutletTableData(response.data);
     }
+  };
+
+  const getAllCompanys = async () => {
+    const response = await getCompany();
+
+    if (response.status === 200) {
+      const options = [];
+      for (let i = 0; i < response.data.length; i++) {
+        options.push({
+          label: response.data[i].name,
+          value: response.data[i].id,
+        });
+      }
+      setCompanyList(options);
+    }
+
   };
 
   const outletTableColumns = [
@@ -47,18 +66,19 @@ const Outlets = () => {
       <PageHeader title="Outlets" />
       <ManageOutlet
         isModalOpen={isOpen}
-        handleCancel={() => setIsOpen(false)}
+        companyList={companyList}
+        handleCancel={() => {setIsOpen(false);getAllOutlets()}}
         handleOk={() => console.log("handleOk")}
       />
       <div className="bg-white p-6 rounded-xl shadow-sm mt-5">
         <div className="flex flex-col gap-2 items-center justify-between lg:flex-row">
-          <div className="bg-[] w-full flex items-center border-[1px] border-[#e6ebf1] rounded-xl py-2 pl-2 pr-4 lg:w-[500px] shadow-md border-radius-50">
+          {/* <div className="bg-[] w-full flex items-center border-[1px] border-[#e6ebf1] rounded-xl py-2 pl-2 pr-4 lg:w-[500px] shadow-md border-radius-50">
             <input
               type="search"
               className="bg-transparent w-full pl-2 outline-none font-medium text-base"
             />
             <HiSearch color="#A5B0BF" />
-          </div>
+          </div> */}
           <button
             className="flex w-full shadow-md items-center justify-center gap-1 bg-A7D200 text-white fw-bold px-5 py-3 border-radius-50 hover:opacity-70 duration-500 lg:w-auto"
             onClick={() => setIsOpen(true)}

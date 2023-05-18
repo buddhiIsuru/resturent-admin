@@ -102,7 +102,7 @@ const ManageProduct = (props) => {
     e.preventDefault();
     const formData = new FormData();
     formData.append('productImage', e.target.files[0]);
-    const response = await axios.post("http://localhost:8080/api/file/upload", formData);
+    const response = await axios.post(baseUrl+"/api/file/upload", formData);
     if (response.status === 200) {
       setImageId(response.data);
     }

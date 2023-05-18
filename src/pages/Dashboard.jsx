@@ -7,7 +7,7 @@ import Pie from "../charts/Pie";
 const Dashboard = () => {
   return (
     <div className="duration-500 p-6">
-      <div className="grid gap-4 grid-cols-1 md:grid-cols-2 xl:grid-cols-5 ">
+      {/* <div className="grid gap-4 grid-cols-1 md:grid-cols-2 xl:grid-cols-5 ">
         <DashboardInfoCard title="Companies" amount={40} />
         <DashboardInfoCard title="Teams" amount={35} />
         <DashboardInfoCard title="Users" amount={440} />
@@ -75,7 +75,7 @@ const Dashboard = () => {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };
