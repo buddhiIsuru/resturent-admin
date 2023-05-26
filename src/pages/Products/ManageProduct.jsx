@@ -27,15 +27,17 @@ const tailLayout = {
 
 const ManageProduct = (props) => {
 
-  const formRef = React.useRef(null);
   const [form] = Form.useForm();
-
-  const [categoryList, setCategoryList] = useState([]);
-  const [isOpen, setIsOpen] = useState(false);
-
-  const [outletId, setOutletId] = useState(null);
+  
+  const formRef = React.useRef(null);
+  
   const [file, setFile] = useState(null);
   const [imageId, setImageId] = useState(null);
+  const [outletId, setOutletId] = useState(null);
+  const [categoryList, setCategoryList] = useState([]);
+  
+  const [isOpen, setIsOpen] = useState(false);
+  const [taxIncluded, setTaxIncluded] = useState(true);
 
   const { id } = useParams();
 
@@ -87,6 +89,7 @@ const ManageProduct = (props) => {
       product_code: values.outlet,
       unit_type: values.unit_type,
       imageId: imageId,
+      taxIncluded: taxIncluded,
       categoryId: values.category
     }
     const response = await saveProduct(data);
@@ -104,6 +107,7 @@ const ManageProduct = (props) => {
     formData.append('productImage', e.target.files[0]);
     const response = await axios.post(baseUrl+"/api/file/upload", formData);
     if (response.status === 200) {
+      console.log(response.data);
       setImageId(response.data);
     }
   };
@@ -225,6 +229,9 @@ const ManageProduct = (props) => {
                   options={categoryList}
                 />
               </Form.Item>
+
+              <Button onClick={()=>setTaxIncluded(true)} style={{background:taxIncluded?"#1677ff":"transparent",color:taxIncluded?"white":"black"}} >Tax Included</Button>
+              <Button onClick={()=>setTaxIncluded(false)} style={{background:taxIncluded?"transparent":"#1677ff",color:taxIncluded?"black":"white"}} >Tax excluded</Button>
 
 
 
