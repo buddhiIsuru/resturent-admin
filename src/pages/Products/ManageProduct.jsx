@@ -234,10 +234,9 @@ const ManageProduct = (props) => {
               <Button onClick={()=>setTaxIncluded(false)} style={{background:taxIncluded?"transparent":"#1677ff",color:taxIncluded?"black":"white"}} >Tax excluded</Button>
 
 
-
               <Form.Item
                 {...tailLayout}
-                className="items-center border-radius-5 text-end"
+                className="items-center border-radius-5 text-end mt-4"
               >
                 <Button
                   type={"primary"}
