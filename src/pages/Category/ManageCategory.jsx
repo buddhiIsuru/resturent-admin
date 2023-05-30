@@ -101,7 +101,8 @@ const ManageCategory = (props) => {
           style={{
             maxWidth: 600,
           }}
-          layout="vertical" autoComplete="off"
+          layout="vertical" 
+          autoComplete="off"
         >
           <Form.Item
             name="category_name"

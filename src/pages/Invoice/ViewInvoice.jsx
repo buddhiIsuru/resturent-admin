@@ -104,11 +104,13 @@ const ViewInvoice = (props) => {
       title: "product_amount",
       dataIndex: "product_amount",
       key: "product_amount",
+      render: (data) =><>{parseFloat(data).toFixed(3)}</>
     },
     {
       title: "Tax Amount",
       dataIndex: "product_discount",
       key: "product_discount",
+      render: (data) =><>{parseFloat(data).toFixed(3)}</>
     },
     {
       title: "product_qty",
@@ -131,7 +133,7 @@ const ViewInvoice = (props) => {
             Invoice number :
           </div>
           <div className="w-[25%] text-right">
-            {invoiceObj?.invoiceId}
+            {invoiceObj?.id}
           </div>
         </Row>
         <Row className="w-100">
@@ -176,7 +178,7 @@ const ViewInvoice = (props) => {
             Sub total :
           </div>
           <div className="w-[25%] text-[17px] text-right">
-            {invoiceObj?.subTotalAmount}
+            {parseFloat(invoiceObj?.subTotalAmount).toFixed(3)}
           </div>
         </Row>
         <Row className="w-100">
@@ -184,7 +186,7 @@ const ViewInvoice = (props) => {
             Discount total (Omr.) :
           </div>
           <div className="w-[25%] text-[17px] text-right">
-            {invoiceObj?.total_discount}
+            {parseFloat(invoiceObj?.total_discount).toFixed(3)}
           </div>
         </Row>
         <Row className="w-100">
@@ -192,7 +194,7 @@ const ViewInvoice = (props) => {
             Tax (Omr.) :
           </div>
           <div className="w-[25%] text-[17px] text-right">
-            {invoiceObj?.tax_amount}
+            {parseFloat(invoiceObj?.tax_amount).toFixed(3)}
           </div>
         </Row>
         <Row className="w-100">
@@ -200,7 +202,7 @@ const ViewInvoice = (props) => {
             Grand total :
           </div>
           <div className="w-[25%] text-[20px] fw-700 text-right">
-            {invoiceObj?.grandTotalAmount}
+            {parseFloat(invoiceObj?.grandTotalAmount).toFixed(3)}
           </div>
         </Row>
 

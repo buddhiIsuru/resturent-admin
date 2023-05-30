@@ -62,36 +62,43 @@ const Invoice = () => {
   const tableColumns = [
     {
       title: "Invoice NO",
-      dataIndex: "invoiceId",
+      dataIndex: "id",
       key: "invoiceId",
     },
     {
       title: "Date/Time",
       dataIndex: "createdAt",
       key: "createdAt",
-      render: (data) => 
-          // <Button >{data}</Button>
-          <p>{moment(data).format('MMMM Do YYYY, h:mm:ss a')}</p>
+      render: (data) =>
+        // <Button >{data}</Button>
+        <p>{moment(data).format('MMMM Do YYYY, h:mm:ss a')}</p>
     },
     {
       title: "Sub Total",
       dataIndex: "subTotalAmount",
       key: "subTotalAmount",
+      render: (data) =>
+        <>{parseFloat(data).toFixed(3)}</>
     },
     {
       title: "Tax Amount",
       dataIndex: "tax_amount",
       key: "tax_amount",
+      render: (data) =>
+        <>{parseFloat(data).toFixed(3)}</>
     },
     {
       title: "Discount",
       dataIndex: "total_discount",
       key: "total_discount",
+      render: (data) =><>{parseFloat(data).toFixed(3)}</>
     },
     {
       title: "Grand Total",
       dataIndex: "grandTotalAmount",
       key: "grandTotalAmount",
+      render: (data) =>
+        <>{parseFloat(data).toFixed(3)}</>
     },
     {
       title: "Action",

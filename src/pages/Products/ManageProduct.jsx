@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Button, Col, Form, Input, Modal, PageHeader, Row, Select } from "antd";
-import { getAllCategry, saveCategry } from "../../service/categoryService";
+import { Button, Col, Form, Image, Input, Modal, PageHeader, Row, Select, Space, Spin } from "antd";
+import { getAllCategry, getCategryByOutlet, saveCategry } from "../../service/categoryService";
 import { notifyError, notifySuccess } from "../../Utils/utility";
 import { getAllOutlet } from "../../service/outletService";
 import { useSelector } from "react-redux";
 import FileUploader from "../../components/FileUploader/FileUploader";
 import { addImage, getProductBuId, saveProduct } from "../../service/productService";
-import { baseUrl } from "../../service/baseUrl";
+import { baseUrl, imageBaseUrl } from "../../service/baseUrl";
 import axios from "axios";
 import { httpPOST } from "../../service/intercepter";
 import { useParams } from "react-router-dom";
@@ -28,29 +28,43 @@ const tailLayout = {
 const ManageProduct = (props) => {
 
   const [form] = Form.useForm();
-  
+
   const formRef = React.useRef(null);
-  
-  const [file, setFile] = useState(null);
+
+  const [isLoding, setIsLoading] = useState(false);
+
   const [imageId, setImageId] = useState(null);
-  const [outletId, setOutletId] = useState(null);
   const [categoryList, setCategoryList] = useState([]);
-  
-  const [isOpen, setIsOpen] = useState(false);
+
   const [taxIncluded, setTaxIncluded] = useState(true);
+  const [outletList, setOutletList] = useState([]);
 
   const { id } = useParams();
 
 
   useEffect(() => {
-    getAllCategrys();
+    getALlOutlet();
     if (id) {
       getProductById(id);
     }
   }, []);
 
-  const getAllCategrys = async () => {
-    const response = await getAllCategry();
+  const getALlOutlet = async (id) => {
+    const response = await getAllOutlet();
+    const options = [];
+    if (response.status === 200) {
+      for (let i = 0; i < response.data.length; i++) {
+        options.push({
+          label: response.data[i].outletName,
+          value: response.data[i].id,
+        });
+      }
+    }
+    setOutletList(options);
+  };
+
+  const getAllCategrys = async (id) => {
+    const response = await getCategryByOutlet(id);
     const options = [];
     if (response.status === 200) {
       for (let i = 0; i < response.data.length; i++) {
@@ -67,6 +81,8 @@ const ManageProduct = (props) => {
     const response = await getProductBuId(id);
     console.log(response);
     if (response.status === 200) {
+      getAllCategrys(response.data.categoryModal.outletId);
+      setImageId(response.data.imageId);
       form.setFieldsValue({
         product_name: response.data.name,
         price: response.data.price,
@@ -74,7 +90,8 @@ const ManageProduct = (props) => {
         product_code: response.data.product_code,
         unit_type: response.data.unit_type,
         current_category: response.data.categoryModal.name,
-        category: response.data.categoryModal.id
+        category: response.data.categoryModal.id,
+        outlet: response.data.categoryModal.outletId
       });
     }
   };
@@ -82,11 +99,11 @@ const ManageProduct = (props) => {
   const onFinish = async (values) => {
     console.log(values);
     const data = {
-      id:id,
+      id: id,
       name: values.product_name,
       price: values.price,
       discount: values.discount,
-      product_code: values.outlet,
+      product_code: "524",
       unit_type: values.unit_type,
       imageId: imageId,
       taxIncluded: taxIncluded,
@@ -102,14 +119,16 @@ const ManageProduct = (props) => {
   };
 
   const onFileChangeHandler = async (e) => {
+    setIsLoading(true);
     e.preventDefault();
     const formData = new FormData();
     formData.append('productImage', e.target.files[0]);
-    const response = await axios.post(baseUrl+"/api/file/upload", formData);
+    const response = await axios.post(baseUrl + "/api/file/upload", formData);
     if (response.status === 200) {
       console.log(response.data);
       setImageId(response.data);
     }
+    setIsLoading(false);
   };
 
   const onReset = () => {
@@ -117,7 +136,7 @@ const ManageProduct = (props) => {
   };
 
   const handleChange = (value) => {
-    console.log(`selected ${value}`);
+    getAllCategrys(value);
   };
 
   return (
@@ -198,6 +217,16 @@ const ManageProduct = (props) => {
                 />
               </Form.Item>
 
+              {
+                imageId ?
+                  <Space>
+                    <label>Current Image</label>
+
+                    <Image src={imageId !== null ? imageBaseUrl + imageId : ""} height={50} width={50} />
+                  </Space>
+                  : null
+              }
+
               <Form.Item
                 name="file"
                 label="file"
@@ -207,6 +236,21 @@ const ManageProduct = (props) => {
                   className="bg-white w-[100%] flex items-center border-[1px] border-[#6A6D6C]  border-radius-5 py-2 px-2"
                   placeholder="Unit Type"
                   onChange={(e) => onFileChangeHandler(e)}
+                />
+              </Form.Item>
+
+              <Form.Item
+                name="outlet"
+                label="Outlet"
+              >
+
+                <Select
+                  className="bg-white w-[100%] flex items-center border-[1px] border-[#6A6D6C]  border-radius-5  py-1"
+                  style={{
+                    width: '100%',
+                  }}
+                  onChange={handleChange}
+                  options={outletList}
                 />
               </Form.Item>
 
@@ -230,21 +274,26 @@ const ManageProduct = (props) => {
                 />
               </Form.Item>
 
-              <Button onClick={()=>setTaxIncluded(true)} style={{background:taxIncluded?"#1677ff":"transparent",color:taxIncluded?"white":"black"}} >Tax Included</Button>
-              <Button onClick={()=>setTaxIncluded(false)} style={{background:taxIncluded?"transparent":"#1677ff",color:taxIncluded?"black":"white"}} >Tax excluded</Button>
+              <Button onClick={() => setTaxIncluded(true)} style={{ background: taxIncluded ? "#1677ff" : "transparent", color: taxIncluded ? "white" : "black" }} >Tax Included</Button>
+              <Button onClick={() => setTaxIncluded(false)} style={{ background: taxIncluded ? "transparent" : "#1677ff", color: taxIncluded ? "black" : "white" }} >Tax excluded</Button>
 
 
               <Form.Item
                 {...tailLayout}
                 className="items-center border-radius-5 text-end mt-4"
               >
-                <Button
-                  type={"primary"}
-                  htmlType="submit"
-                  className="items-center border-radius-5"
-                >
-                  Submit
-                </Button>
+                {
+                  isLoding ?
+                    <Spin />
+                    :
+                    <Button
+                      type={"primary"}
+                      htmlType="submit"
+                      className="items-center border-radius-5"
+                    >
+                      Submit
+                    </Button>
+                }
               </Form.Item>
             </Col>
             {/* <Col style={{ padding: 5 }} span={8}>

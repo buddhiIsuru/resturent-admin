@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Button, Form, Input, Modal, Select, message } from "antd";
+import { Button, Form, Image, Input, Modal, Select, Space, Spin, message } from "antd";
 import { saveOutlet } from "../../service/outletService";
 import { useDispatch } from "react-redux";
 import { setIsLoadingOutlet } from "../../redux/state/outletState";
 import { notifySuccess } from "../../Utils/utility";
-import { baseUrl } from "../../service/baseUrl";
+import { baseUrl, imageBaseUrl } from "../../service/baseUrl";
 import axios from "axios";
 
 const layout = {
@@ -29,11 +29,32 @@ const ManageOutlet = (props) => {
 
   const [messageApi, contextHolder] = message.useMessage();
 
+  const [isLoding, setIsLoading] = useState(false);
   const [imageId, setImageId] = useState(null);
+  const [outletId, setOutletId] = useState("");
 
   const dispatch = useDispatch();
 
+  useEffect(() => {
+    if (props.company) {
+      setOutletData(props.company);
+    }
+  }, [props.company]);
+
+  const setOutletData = async (company) => {
+    setOutletId(company.id);
+    console.log(company);
+    setImageId(company.logoId);
+    form.setFieldsValue({
+      outlet_name: company.outletName,
+      outlet_address: company.address,
+      outlet_phoneNo: company.phoneNo,
+      company: company.companyId
+    });
+  };
+
   const onFileChangeHandler = async (e) => {
+    setIsLoading(true);
     e.preventDefault();
     const formData = new FormData();
     formData.append('productImage', e.target.files[0]);
@@ -41,11 +62,13 @@ const ManageOutlet = (props) => {
     if (response.status === 200) {
       setImageId(response.data);
     }
+    setIsLoading(false);
   };
 
   const onFinish = async (values) => {
     dispatch(setIsLoadingOutlet(true));
     const data = {
+      id: outletId,
       outletName: values.outlet_name,
       address: values.outlet_address,
       phoneNo: values.outlet_phoneNo,
@@ -82,6 +105,7 @@ const ManageOutlet = (props) => {
         onCancel={props.handleCancel}
       >
         <Form
+          form={form}
           ref={formRef}
           name="control-ref"
           onFinish={onFinish}
@@ -167,17 +191,32 @@ const ManageOutlet = (props) => {
             />
           </Form.Item>
 
+          {
+            imageId ?
+              <Space>
+                <label>Current logo</label>
+
+                <Image src={imageId !== null ? imageBaseUrl + imageId : ""} height={50} width={50} />
+              </Space>
+              : null
+          }
+
           <Form.Item
             {...tailLayout}
             className="items-center border-radius-5 text-end"
           >
-            <Button
-              type="primary"
-              htmlType="submit"
-              className="items-center border-radius-5"
-            >
-              Submit
-            </Button>
+            {
+              isLoding ?
+                <Spin />
+                :
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  className="items-center border-radius-5"
+                >
+                  Submit
+                </Button>
+            }
           </Form.Item>
         </Form>
       </Modal>

@@ -8,12 +8,16 @@ import { categoryTableColumns } from "../../constants/tableColumns";
 import ManageOutlet from "./ManageOutlet";
 import { getAllOutlet } from "../../service/outletService";
 import { getCompany } from "../../service/companyService";
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import { Avatar, Button, Image, Popconfirm, Space } from "antd";
+import { imageBaseUrl } from "../../service/baseUrl";
 
 const Outlets = () => {
   const navigateTo = useNavigate();
   const [outletTableData, setOutletTableData] = useState([]);
   const [companyList, setCompanyList] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
+  const [companyObj, setCompanyObj] = useState({});
 
   useEffect(() => {
     getAllOutlets(0, 20);
@@ -45,6 +49,17 @@ const Outlets = () => {
 
   const outletTableColumns = [
     {
+      title: "Logo",
+      dataIndex: "",
+      key: "Logo",
+      render: (data) =>
+        <Avatar
+          style={{
+            backgroundColor: '#1677ff',
+          }}
+          icon={<Image src={data.logoId !== null ? imageBaseUrl + data.logoId : ""} />}
+        />
+    }, {
       title: "Name",
       dataIndex: "outletName",
       key: "outletName",
@@ -58,6 +73,27 @@ const Outlets = () => {
       title: "Phone No",
       dataIndex: "phoneNo",
       key: "phoneNo",
+    },
+    {
+      title: "Action",
+      dataIndex: "",
+      key: "Action",
+      render: (data) => <Space>
+        {/* <Tooltip title="Update Category"> 
+          <Button warning shape="circle" onClick={()=>{setCategoryObj(data);setIsOpen(true);}} icon={<EditOutlined />}></Button>
+        </Tooltip> */}
+        <Popconfirm
+          title="Are you sure to delete this category?"
+          description="Are you sure to delete this task?"
+          // onConfirm={() => confirm(data)}
+          // onCancel={cancel}
+          okText="Yes"
+          cancelText="No"
+        >
+          <Button danger shape="circle" onClick={() => { }} icon={<DeleteOutlined />}></Button>
+        </Popconfirm>
+        <Button warning shape="circle" onClick={() => { setCompanyObj(data); setIsOpen(true) }} icon={<EditOutlined />}></Button>
+      </Space>,
     }
   ]
 
@@ -67,7 +103,8 @@ const Outlets = () => {
       <ManageOutlet
         isModalOpen={isOpen}
         companyList={companyList}
-        handleCancel={() => {setIsOpen(false);getAllOutlets()}}
+        company={companyObj}
+        handleCancel={() => { setIsOpen(false); getAllOutlets() }}
         handleOk={() => console.log("handleOk")}
       />
       <div className="bg-white p-6 rounded-xl shadow-sm mt-5">
