@@ -82,7 +82,7 @@ const Outlets = () => {
         {/* <Tooltip title="Update Category"> 
           <Button warning shape="circle" onClick={()=>{setCategoryObj(data);setIsOpen(true);}} icon={<EditOutlined />}></Button>
         </Tooltip> */}
-        <Popconfirm
+        {/* <Popconfirm
           title="Are you sure to delete this category?"
           description="Are you sure to delete this task?"
           // onConfirm={() => confirm(data)}
@@ -91,7 +91,7 @@ const Outlets = () => {
           cancelText="No"
         >
           <Button danger shape="circle" onClick={() => { }} icon={<DeleteOutlined />}></Button>
-        </Popconfirm>
+        </Popconfirm> */}
         <Button warning shape="circle" onClick={() => { setCompanyObj(data); setIsOpen(true) }} icon={<EditOutlined />}></Button>
       </Space>,
     }
