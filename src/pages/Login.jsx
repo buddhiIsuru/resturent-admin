@@ -32,8 +32,8 @@ const Login = () => {
     };
     const response = await login(data);
     if (response.status === 200) {
-      if (response.data.outletModal && response.data.roleModal) {
-        localStorageSetItem("outlet", response.data.outletModal);
+      if (response.data.roleModal.name==="ADMIN") {
+        // localStorageSetItem("outlet", response.data.outletModal);
         localStorageSetItem("role", response.data.roleModal);
         navigateTo("/admin/dashboard");
       }
