@@ -301,7 +301,7 @@ const ManageProduct = (props) => {
                   style={{
                     width: '100%',
                   }}
-                  onChange={handleChange}
+                  // onChange={handleChange}
                   options={categoryList}
                 />
               </Form.Item>
