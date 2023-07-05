@@ -15,6 +15,7 @@ import Products from "./pages/Products/Products";
 import ManageProduct from "./pages/Products/ManageProduct";
 import Invoice from './pages/Invoice/Invoice';
 import Users from "./pages/Users/Users";
+import OrderDevice from "./pages/OrderDevice/OrderDevice";
 
 // const ProtectedRoute = ({
 //   component: Component,
@@ -78,6 +79,7 @@ function App() {
           <Route path="/admin/outlets" element={<Outlets />} />
           <Route path="/admin/product" element={<Products />} />
           <Route path="/admin/users" element={<Users />} />
+          <Route path="/admin/devices" element={<OrderDevice />} />
           <Route path="/admin/manage-product" element={<ManageProduct />} />
           <Route path="/admin/manage-product/:id" element={<ManageProduct />} />
         </Routes>

@@ -25,6 +25,7 @@ export const menusItems = [
     icon: RiGitPullRequestFill,
   },
   { name: "Users", link: "/admin/users", icon: RiUser2Line },
+  { name: "Order Device", link: "/admin/devices", icon: MdOutlineStarBorderPurple500 },
   // { name: "Customers", link: "/employees", icon: TbUsers },
   // {
   //   name: "packages",

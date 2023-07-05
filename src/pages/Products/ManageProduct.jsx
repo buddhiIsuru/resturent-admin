@@ -10,6 +10,7 @@ import { baseUrl, imageBaseUrl } from "../../service/baseUrl";
 import axios from "axios";
 import { httpPOST } from "../../service/intercepter";
 import { useParams } from "react-router-dom";
+import { getDevicesOutletId } from "../../service/deviceService";
 const layout = {
   labelCol: {
     span: 8,
@@ -35,9 +36,12 @@ const ManageProduct = (props) => {
 
   const [imageId, setImageId] = useState(null);
   const [categoryList, setCategoryList] = useState([]);
+  const [productDevices, setProductDevices] = useState([]);
 
   const [taxIncluded, setTaxIncluded] = useState(true);
   const [outletList, setOutletList] = useState([]);
+
+  const [deviceList, setDeviceList] = useState([]);
 
   const { id } = useParams();
 
@@ -107,14 +111,25 @@ const ManageProduct = (props) => {
       unit_type: values.unit_type,
       imageId: imageId,
       taxIncluded: taxIncluded,
-      categoryId: values.category
+      categoryId: values.category,
+      devicePrices:deviceList
     }
+    console.log(data);
     const response = await saveProduct(data);
     if (response.status === 200) {
       notifySuccess("Created Success");
       onReset();
     } else {
       notifyError("Created Failed");
+    }
+  };
+
+  const getDevices = async (id) => {
+    const response = await getDevicesOutletId(id);
+    console.log(response);
+    console.log(response.data);
+    if (response.status === 200) {
+      setDeviceList(response.data);
     }
   };
 
@@ -132,11 +147,28 @@ const ManageProduct = (props) => {
   };
 
   const onReset = () => {
+    
     form.resetFields();
   };
 
   const handleChange = (value) => {
     getAllCategrys(value);
+    getDevices(value);
+  };
+
+
+  const productDevicesHandleChange = (id, value) => {
+    const tempDeviceList = deviceList;
+    console.log(id);
+    tempDeviceList.forEach(element => {
+      console.log(element);
+      if (id == element.deviceId) {
+        
+        element.price = parseFloat(value).toFixed(3)
+      }
+    });
+    setDeviceList(tempDeviceList);
+    console.log(tempDeviceList);
   };
 
   return (
@@ -170,7 +202,7 @@ const ManageProduct = (props) => {
                 />
               </Form.Item>
 
-              <Form.Item
+              {/* <Form.Item
                 name="price"
                 label="Price"
                 rules={[
@@ -184,9 +216,9 @@ const ManageProduct = (props) => {
                   placeholder="Price"
                   type="number"
                 />
-              </Form.Item>
+              </Form.Item> */}
 
-              <Form.Item
+              {/* <Form.Item
                 name="discount"
                 label="Discount"
                 rules={[
@@ -200,7 +232,7 @@ const ManageProduct = (props) => {
                   placeholder="Discount"
                   type="number"
                 />
-              </Form.Item>
+              </Form.Item> */}
 
               <Form.Item
                 name="unit_type"
@@ -273,6 +305,29 @@ const ManageProduct = (props) => {
                   options={categoryList}
                 />
               </Form.Item>
+              {
+                deviceList.map((obj, index) => {
+                  return (
+                    <Form.Item
+                      name={obj.deviceName}
+                      label={obj.deviceName + " Price"}
+                      rules={[
+                        {
+                          required: true,
+                        },
+                      ]}
+                    >
+                      <Input
+                        className="bg-white w-[100%] flex items-center border-[1px] border-[#6A6D6C]  border-radius-5 py-2 px-2"
+                        placeholder={obj.deviceName + " Price"}
+                        onChange={(e)=>{productDevicesHandleChange(obj.deviceId,e.target.value)}}
+                      />
+                    </Form.Item>
+                  )
+                })
+              }
+
+
 
               <Button onClick={() => setTaxIncluded(true)} style={{ background: taxIncluded ? "#1677ff" : "transparent", color: taxIncluded ? "white" : "black" }} >Tax Included</Button>
               <Button onClick={() => setTaxIncluded(false)} style={{ background: taxIncluded ? "transparent" : "#1677ff", color: taxIncluded ? "black" : "white" }} >Tax excluded</Button>
